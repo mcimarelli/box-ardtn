@@ -20,7 +20,8 @@ import {
   Trophy,
   Activity,
   ExternalLink,
-  Info
+  Info,
+  Plus
 } from 'lucide-react';
 import { WORKOUTS } from './data/workouts';
 import { Workout, Movement, WorkoutLog } from './types';
@@ -323,15 +324,214 @@ const TutorialView = ({ onBack }: { onBack: () => void }) => {
   );
 };
 
+const COMMON_MOVEMENTS = [
+  'Air Squats', 'Back Squat', 'Front Squat', 'Overhead Squat',
+  'Pull-ups', 'Chest-to-Bar', 'Bar Muscle-ups', 'Ring Muscle-ups',
+  'Push-ups', 'Handstand Push-ups', 'Ring Dips',
+  'Thrusters', 'Cleans', 'Power Cleans', 'Squat Cleans',
+  'Snatches', 'Power Snatches', 'Squat Snatches',
+  'Deadlifts', 'Sumo Deadlift High Pull',
+  'Wall Balls', 'Box Jumps', 'Double-unders', 'Burpees',
+  'Run', 'Row', 'Assault Bike', 'SkiErg',
+  'Kettlebell Swings', 'Toes-to-Bar', 'Knees-to-Elbows', 'Sit-ups'
+];
+
+const WorkoutCreator = ({ onSave, onCancel }: { onSave: (w: Workout) => void, onCancel: () => void }) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState<'Benchmark' | 'Hero' | 'Daily' | 'Open'>('Daily');
+  const [difficulty, setDifficulty] = useState<'Beginner' | 'Intermediate' | 'Advanced' | 'Elite'>('Intermediate');
+  const [type, setType] = useState('FOR TIME');
+  const [movements, setMovements] = useState<Movement[]>([]);
+  const [isExtreme, setIsExtreme] = useState(false);
+
+  const addMovement = () => {
+    setMovements([...movements, { name: COMMON_MOVEMENTS[0], reps: '' }]);
+  };
+
+  const updateMovement = (index: number, field: keyof Movement, value: string) => {
+    const newMovements = [...movements];
+    newMovements[index] = { ...newMovements[index], [field]: value };
+    setMovements(newMovements);
+  };
+
+  const removeMovement = (index: number) => {
+    setMovements(movements.filter((_, i) => i !== index));
+  };
+
+  const handleSave = () => {
+    if (!name || movements.length === 0) return;
+    
+    const newWorkout: Workout = {
+      id: `custom-${Date.now()}`,
+      name,
+      description,
+      category,
+      difficulty,
+      type,
+      movements,
+      isExtreme
+    };
+    onSave(newWorkout);
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto py-8 space-y-8">
+      <div className="flex items-center justify-between">
+        <h2 className="font-display text-5xl tracking-tighter uppercase">CREATE WOD</h2>
+        <button onClick={onCancel} className="text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase">
+          <X size={16} /> CANCEL
+        </button>
+      </div>
+
+      <div className="space-y-6 bg-card-bg aggressive-border p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Workout Name</label>
+            <input 
+              type="text" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:outline-none focus:border-neon transition-colors"
+              placeholder="e.g. THE GRINDER"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Type</label>
+            <input 
+              type="text" 
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:outline-none focus:border-neon transition-colors"
+              placeholder="e.g. AMRAP 15"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Description</label>
+          <textarea 
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:outline-none focus:border-neon transition-colors h-20 resize-none"
+            placeholder="Briefly describe the workout flow..."
+          />
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Category</label>
+            <select 
+              value={category}
+              onChange={(e) => setCategory(e.target.value as any)}
+              className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:outline-none focus:border-neon transition-colors appearance-none"
+            >
+              <option value="Daily">Daily</option>
+              <option value="Benchmark">Benchmark</option>
+              <option value="Hero">Hero</option>
+              <option value="Open">Open</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Difficulty</label>
+            <select 
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value as any)}
+              className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:outline-none focus:border-neon transition-colors appearance-none"
+            >
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+              <option value="Elite">Elite</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-3 pt-6">
+            <input 
+              type="checkbox" 
+              id="extreme"
+              checked={isExtreme}
+              onChange={(e) => setIsExtreme(e.target.checked)}
+              className="w-4 h-4 accent-neon"
+            />
+            <label htmlFor="extreme" className="text-[10px] font-bold text-white/50 uppercase tracking-widest cursor-pointer">Extreme Mode</label>
+          </div>
+        </div>
+
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <h3 className="text-[10px] font-bold text-neon uppercase tracking-[0.3em]">Movements</h3>
+            <button 
+              onClick={addMovement}
+              className="text-neon hover:text-white transition-colors flex items-center gap-1 text-[10px] font-bold uppercase"
+            >
+              <Plus size={12} /> Add Exercise
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {movements.map((m, i) => (
+              <div key={i} className="flex gap-3 items-start bg-white/5 p-4 group">
+                <div className="flex-1 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <select 
+                      value={m.name}
+                      onChange={(e) => updateMovement(i, 'name', e.target.value)}
+                      className="bg-dark-bg border border-white/10 p-2 text-xs focus:outline-none focus:border-neon"
+                    >
+                      {COMMON_MOVEMENTS.map(name => <option key={name} value={name}>{name}</option>)}
+                    </select>
+                    <input 
+                      type="text" 
+                      placeholder="Reps (e.g. 21)"
+                      value={m.reps}
+                      onChange={(e) => updateMovement(i, 'reps', e.target.value)}
+                      className="bg-dark-bg border border-white/10 p-2 text-xs focus:outline-none focus:border-neon"
+                    />
+                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="Weight (optional, e.g. 40kg)"
+                    value={m.weight || ''}
+                    onChange={(e) => updateMovement(i, 'weight', e.target.value)}
+                    className="w-full bg-dark-bg border border-white/10 p-2 text-xs focus:outline-none focus:border-neon"
+                  />
+                </div>
+                <button 
+                  onClick={() => removeMovement(i)}
+                  className="text-white/20 hover:text-aggressive-red transition-colors pt-2"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+            {movements.length === 0 && (
+              <p className="text-center py-8 text-white/20 text-xs italic">No movements added yet.</p>
+            )}
+          </div>
+        </div>
+
+        <button 
+          onClick={handleSave}
+          disabled={!name || movements.length === 0}
+          className="w-full bg-neon text-black font-display text-xl py-4 tracking-tight hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100"
+        >
+          SAVE CUSTOM WORKOUT
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [showTimer, setShowTimer] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
-  const [view, setView] = useState<'workouts' | 'tutorials'>('workouts');
+  const [view, setView] = useState<'workouts' | 'tutorials' | 'create'>('workouts');
   const [tempPerformance, setTempPerformance] = useState('');
   const [logs, setLogs] = useState<WorkoutLog[]>([]);
+  const [customWorkouts, setCustomWorkouts] = useState<Workout[]>([]);
   const [expandedMovement, setExpandedMovement] = useState<number | null>(null);
 
   useEffect(() => {
@@ -343,7 +543,23 @@ export default function App() {
         console.error('Failed to parse logs', e);
       }
     }
+
+    const savedCustom = localStorage.getItem('box-ardtn-custom');
+    if (savedCustom) {
+      try {
+        setCustomWorkouts(JSON.parse(savedCustom));
+      } catch (e) {
+        console.error('Failed to parse custom workouts', e);
+      }
+    }
   }, []);
+
+  const saveCustomWorkout = (newWorkout: Workout) => {
+    const updated = [newWorkout, ...customWorkouts];
+    setCustomWorkouts(updated);
+    localStorage.setItem('box-ardtn-custom', JSON.stringify(updated));
+    setView('workouts');
+  };
 
   const saveLog = (newLogData: Omit<WorkoutLog, 'id'>) => {
     const newLog: WorkoutLog = {
@@ -363,7 +579,8 @@ export default function App() {
   }, [logs, selectedWorkout]);
 
   const filteredWorkouts = useMemo(() => {
-    return WORKOUTS.filter(w => {
+    const allWorkouts = [...customWorkouts, ...WORKOUTS];
+    return allWorkouts.filter(w => {
       const matchesSearch = w.name.toLowerCase().includes(search.toLowerCase()) || 
                            w.description.toLowerCase().includes(search.toLowerCase());
       
@@ -427,6 +644,12 @@ export default function App() {
             >
               <Play size={12} fill={view === 'tutorials' ? 'black' : 'currentColor'} /> DEMO
             </button>
+            <button 
+              onClick={() => setView('create')}
+              className={`flex-shrink-0 px-4 py-2 text-[10px] font-bold tracking-widest uppercase border flex items-center gap-2 ${view === 'create' ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+            >
+              <Plus size={12} /> CREATE
+            </button>
           </div>
         </div>
       </header>
@@ -434,7 +657,19 @@ export default function App() {
       {/* Main Content */}
       <main className="flex-1">
         <AnimatePresence mode="wait">
-          {view === 'tutorials' ? (
+          {view === 'create' ? (
+            <motion.div
+              key="create"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+            >
+              <WorkoutCreator 
+                onSave={saveCustomWorkout} 
+                onCancel={() => setView('workouts')} 
+              />
+            </motion.div>
+          ) : view === 'tutorials' ? (
             <motion.div
               key="tutorials"
               initial={{ opacity: 0, y: 20 }}
