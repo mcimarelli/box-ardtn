@@ -164,12 +164,170 @@ const LogForm = ({ workout, initialPerformance, onSave, onCancel }: {
   );
 };
 
+const TutorialImage = ({ src, alt, className, objectFit = 'cover' }: { src: string, alt: string, className?: string, objectFit?: 'cover' | 'contain' }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  return (
+    <div className={`relative w-full h-full bg-white/5 ${className}`}>
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-neon border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+      {error ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+          <Activity size={24} className="text-white/20 mb-2" />
+          <p className="text-[10px] text-white/30 uppercase tracking-widest">Image failed to load</p>
+        </div>
+      ) : (
+        <img 
+          src={src} 
+          alt={alt}
+          className={`w-full h-full transition-opacity duration-500 ${loading ? 'opacity-0' : 'opacity-100'} ${objectFit === 'cover' ? 'object-cover' : 'object-contain'}`}
+          onLoad={() => setLoading(false)}
+          onError={() => {
+            setLoading(false);
+            setError(true);
+          }}
+          referrerPolicy="no-referrer"
+        />
+      )}
+    </div>
+  );
+};
+
+const TutorialView = ({ onBack }: { onBack: () => void }) => {
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
+  const tutorials = [
+    {
+      title: "BACK SQUAT",
+      subtitle: "POTENZA E PRECISIONE",
+      description: "Guida tecnica al posizionamento, set-up e anatomia del movimento.",
+      image: "/input_file_0.png",
+      points: ["Posizionamento bilanciere sui trapezi", "Discesa sotto il parallelo", "Spinta dai talloni"]
+    },
+    {
+      title: "CHEST TO BAR",
+      subtitle: "TECNICA E PERFORMANCE",
+      description: "I 3 passaggi fondamentali per una trazione perfetta fino al contatto.",
+      image: "/input_file_1.png",
+      points: ["Presa ampia e attivazione scapolare", "Controllo del movimento", "Variante Kipping"]
+    },
+    {
+      title: "CROSSFIT CLEAN",
+      subtitle: "TECNICA E VARIANTI",
+      description: "Dallo stacco alla rack position: le 7 fasi del movimento olimpico.",
+      image: "/input_file_2.png",
+      points: ["Tripla estensione esplosiva", "Gomiti veloci (Pull Under)", "Varianti: Muscle, Power, Squat"]
+    }
+  ];
+
+  return (
+    <div className="space-y-12">
+      <AnimatePresence>
+        {fullscreenImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setFullscreenImage(null)}
+            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 md:p-8 cursor-zoom-out"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative w-full max-w-5xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setFullscreenImage(null)}
+                className="absolute -top-12 right-0 text-white/50 hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase"
+              >
+                CLOSE <X size={16} />
+              </button>
+              <div className="w-full h-[85vh] flex items-center justify-center">
+                <TutorialImage 
+                  src={fullscreenImage} 
+                  alt="Fullscreen Tutorial"
+                  objectFit="contain"
+                  className="shadow-2xl border border-white/10"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-5xl tracking-tighter uppercase">DEMO - TUTORIAL</h2>
+          <p className="text-white/40 text-xs uppercase tracking-[0.2em] mt-2">Master the movements</p>
+        </div>
+        <button 
+          onClick={onBack}
+          className="text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase"
+        >
+          <ArrowLeft size={16} /> Back to WODs
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {tutorials.map((t, i) => (
+          <motion.div 
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="bg-card-bg aggressive-border overflow-hidden flex flex-col"
+          >
+            <div 
+              className="aspect-[3/4] relative overflow-hidden group cursor-zoom-in"
+              onClick={() => setFullscreenImage(t.image)}
+            >
+              <TutorialImage 
+                src={t.image} 
+                alt={t.title}
+                className="grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-card-bg via-transparent to-transparent opacity-60" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                <div className="bg-neon text-black px-4 py-2 font-bold text-[10px] tracking-widest uppercase">
+                  VIEW FULLSCREEN
+                </div>
+              </div>
+              <div className="absolute bottom-4 left-4 right-4">
+                <Badge variant="neon">{t.subtitle}</Badge>
+              </div>
+            </div>
+            <div className="p-6 flex-1 flex flex-col">
+              <h3 className="font-display text-3xl mb-2 tracking-tight">{t.title}</h3>
+              <p className="text-white/50 text-xs leading-relaxed mb-6">{t.description}</p>
+              <div className="mt-auto space-y-2">
+                {t.points.map((p, pi) => (
+                  <div key={pi} className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-white/30 uppercase">
+                    <div className="w-1 h-1 bg-neon rounded-full" />
+                    {p}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [showTimer, setShowTimer] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
+  const [view, setView] = useState<'workouts' | 'tutorials'>('workouts');
   const [tempPerformance, setTempPerformance] = useState('');
   const [logs, setLogs] = useState<WorkoutLog[]>([]);
 
@@ -246,20 +404,26 @@ export default function App() {
           </div>
           <div className="flex gap-2">
             <button 
-              onClick={() => setSelectedCategory(null)}
-              className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${!selectedCategory ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+              onClick={() => { setView('workouts'); setSelectedCategory(null); }}
+              className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${view === 'workouts' && !selectedCategory ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
             >
               ALL
             </button>
             {categories.map(cat => (
               <button 
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${selectedCategory === cat ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+                onClick={() => { setView('workouts'); setSelectedCategory(cat); }}
+                className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${view === 'workouts' && selectedCategory === cat ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
               >
                 {cat}
               </button>
             ))}
+            <button 
+              onClick={() => setView('tutorials')}
+              className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border flex items-center gap-2 ${view === 'tutorials' ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+            >
+              <Play size={12} fill={view === 'tutorials' ? 'black' : 'currentColor'} /> DEMO - TUTORIAL
+            </button>
           </div>
         </div>
       </header>
@@ -267,7 +431,16 @@ export default function App() {
       {/* Main Content */}
       <main className="flex-1">
         <AnimatePresence mode="wait">
-          {!selectedWorkout ? (
+          {view === 'tutorials' ? (
+            <motion.div
+              key="tutorials"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <TutorialView onBack={() => setView('workouts')} />
+            </motion.div>
+          ) : !selectedWorkout ? (
             <motion.div 
               key="list"
               initial={{ opacity: 0, y: 20 }}
