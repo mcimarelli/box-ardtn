@@ -4,6 +4,8 @@ export interface Movement {
   name: string;
   reps: string;
   weight?: string;
+  instructions?: string;
+  videoUrl?: string;
 }
 
 export interface Workout {

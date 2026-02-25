@@ -18,7 +18,9 @@ import {
   RotateCcw,
   ArrowLeft,
   Trophy,
-  Activity
+  Activity,
+  ExternalLink,
+  Info
 } from 'lucide-react';
 import { WORKOUTS } from './data/workouts';
 import { Workout, Movement, WorkoutLog } from './types';
@@ -261,16 +263,16 @@ const TutorialView = ({ onBack }: { onBack: () => void }) => {
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="font-display text-5xl tracking-tighter uppercase">DEMO - TUTORIAL</h2>
-          <p className="text-white/40 text-xs uppercase tracking-[0.2em] mt-2">Master the movements</p>
+          <h2 className="font-display text-4xl md:text-5xl tracking-tighter uppercase">DEMO - TUTORIAL</h2>
+          <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] mt-1">Master the movements</p>
         </div>
         <button 
           onClick={onBack}
-          className="text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase"
+          className="flex-shrink-0 text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase"
         >
-          <ArrowLeft size={16} /> Back to WODs
+          <ArrowLeft size={16} /> <span className="hidden sm:inline">Back</span>
         </button>
       </div>
 
@@ -330,6 +332,7 @@ export default function App() {
   const [view, setView] = useState<'workouts' | 'tutorials'>('workouts');
   const [tempPerformance, setTempPerformance] = useState('');
   const [logs, setLogs] = useState<WorkoutLog[]>([]);
+  const [expandedMovement, setExpandedMovement] = useState<number | null>(null);
 
   useEffect(() => {
     const savedLogs = localStorage.getItem('box-ardtn-logs');
@@ -378,34 +381,34 @@ export default function App() {
   const categories = ['Benchmark', 'Hero', 'Extreme'];
 
   return (
-    <div className="min-h-screen flex flex-col max-w-5xl mx-auto px-4 py-8 md:px-8">
+    <div className="min-h-screen flex flex-col max-w-5xl mx-auto px-4 md:px-8">
       {/* Header */}
-      <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <header className="sticky top-0 z-40 bg-dark-bg/95 backdrop-blur-md pt-8 pb-6 mb-8 md:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <Activity className="text-neon" size={20} />
-            <span className="text-[10px] font-bold tracking-[0.3em] text-white/50 uppercase">Elite Performance</span>
+            <Activity className="text-neon" size={18} />
+            <span className="text-[9px] md:text-[10px] font-bold tracking-[0.3em] text-white/50 uppercase">Elite Performance</span>
           </div>
-          <h1 className="font-display text-7xl md:text-8xl leading-[0.85] tracking-tighter uppercase">
+          <h1 className="font-display text-6xl md:text-8xl leading-[0.85] tracking-tighter uppercase">
             BOX ARDTN<span className="text-neon">.</span>
           </h1>
         </div>
         
         <div className="flex flex-col gap-4 w-full md:w-auto">
           <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-neon transition-colors" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-neon transition-colors" size={20} />
             <input 
               type="text" 
               placeholder="SEARCH WODS..."
-              className="bg-card-bg border border-white/10 rounded-none py-3 pl-10 pr-4 text-xs tracking-widest focus:outline-none focus:border-neon w-full md:w-64 transition-all"
+              className="bg-card-bg border border-white/10 rounded-none py-4 pl-12 pr-6 text-sm tracking-widest focus:outline-none focus:border-neon w-full md:w-[520px] transition-all"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
             <button 
               onClick={() => { setView('workouts'); setSelectedCategory(null); }}
-              className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${view === 'workouts' && !selectedCategory ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+              className={`flex-shrink-0 px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${view === 'workouts' && !selectedCategory ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
             >
               ALL
             </button>
@@ -413,16 +416,16 @@ export default function App() {
               <button 
                 key={cat}
                 onClick={() => { setView('workouts'); setSelectedCategory(cat); }}
-                className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${view === 'workouts' && selectedCategory === cat ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+                className={`flex-shrink-0 px-4 py-2 text-[10px] font-bold tracking-widest uppercase border ${view === 'workouts' && selectedCategory === cat ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
               >
                 {cat}
               </button>
             ))}
             <button 
               onClick={() => setView('tutorials')}
-              className={`px-4 py-2 text-[10px] font-bold tracking-widest uppercase border flex items-center gap-2 ${view === 'tutorials' ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
+              className={`flex-shrink-0 px-4 py-2 text-[10px] font-bold tracking-widest uppercase border flex items-center gap-2 ${view === 'tutorials' ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
             >
-              <Play size={12} fill={view === 'tutorials' ? 'black' : 'currentColor'} /> DEMO - TUTORIAL
+              <Play size={12} fill={view === 'tutorials' ? 'black' : 'currentColor'} /> DEMO
             </button>
           </div>
         </div>
@@ -446,19 +449,30 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {filteredWorkouts.map((workout, idx) => (
                 <motion.div
                   key={workout.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
+                  whileHover={{ 
+                    scale: 1.02, 
+                    y: -4,
+                    backgroundColor: "rgba(255, 255, 255, 0.03)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ 
+                    delay: idx * 0.05,
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20
+                  }}
                   onClick={() => setSelectedWorkout(workout)}
-                  className="group relative bg-card-bg aggressive-border p-6 cursor-pointer overflow-hidden"
+                  className="group relative bg-card-bg aggressive-border p-6 cursor-pointer overflow-hidden flex flex-col h-full"
                 >
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                    <ChevronRight size={24} className="text-neon" />
+                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 group-hover:text-neon transition-all duration-300">
+                    <ChevronRight size={24} />
                   </div>
                   
                   <div className="flex justify-between items-start mb-4">
@@ -469,14 +483,14 @@ export default function App() {
                     <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">{workout.type}</span>
                   </div>
 
-                  <h3 className="font-display text-4xl mb-1 tracking-tight group-hover:text-neon transition-colors">
+                  <h3 className="font-display text-4xl mb-2 tracking-tight group-hover:text-neon transition-colors leading-none">
                     {workout.name}
                   </h3>
-                  <p className="text-white/50 text-xs line-clamp-2 mb-6 leading-relaxed">
+                  <p className="text-white/50 text-xs line-clamp-2 mb-6 leading-relaxed flex-grow">
                     {workout.description}
                   </p>
 
-                  <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+                  <div className="flex items-center gap-4 pt-4 border-t border-white/5 mt-auto">
                     <div className="flex items-center gap-1.5">
                       <Flame size={14} className="text-aggressive-red" />
                       <span className="text-[10px] font-bold text-white/40 uppercase tracking-tighter">{workout.difficulty}</span>
@@ -486,6 +500,9 @@ export default function App() {
                       <span className="text-[10px] font-bold uppercase tracking-tighter">{workout.movements.length} EXERCISES</span>
                     </div>
                   </div>
+                  
+                  {/* Subtle hover glow effect */}
+                  <div className="absolute inset-0 border border-neon/0 group-hover:border-neon/20 transition-colors duration-300 pointer-events-none" />
                 </motion.div>
               ))}
             </motion.div>
@@ -515,7 +532,10 @@ export default function App() {
               ) : (
                 <>
                   <button 
-                    onClick={() => setSelectedWorkout(null)}
+                    onClick={() => {
+                      setSelectedWorkout(null);
+                      setExpandedMovement(null);
+                    }}
                     className="absolute top-8 left-8 text-white/30 hover:text-white transition-colors flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase"
                   >
                     <ArrowLeft size={16} /> Back to Library
@@ -528,7 +548,7 @@ export default function App() {
                         {selectedWorkout.isExtreme && <Badge variant="red">XTRME</Badge>}
                         <Badge variant="outline">{selectedWorkout.difficulty}</Badge>
                       </div>
-                      <h2 className="font-display text-7xl md:text-8xl mb-4 tracking-tighter uppercase leading-none">
+                      <h2 className="font-display text-6xl md:text-8xl mb-4 tracking-tighter uppercase leading-none">
                         {selectedWorkout.name}
                       </h2>
                       <div className="flex items-center gap-2 text-neon mb-6">
@@ -587,17 +607,54 @@ export default function App() {
                       <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.3em] mb-8 flex items-center gap-2">
                         <Trophy size={14} className="text-neon" /> The Protocol
                       </h4>
-                      <div className="space-y-6">
+                      <div className="space-y-4">
                         {selectedWorkout.movements.map((m, i) => (
-                          <div key={i} className="flex items-end justify-between border-b border-white/10 pb-4 group">
-                            <div>
-                              <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Movement {i + 1}</p>
-                              <p className="text-xl font-bold tracking-tight group-hover:text-neon transition-colors">{m.name}</p>
+                          <div key={i} className="border-b border-white/10 pb-4 group">
+                            <div 
+                              className="flex items-end justify-between cursor-pointer"
+                              onClick={() => setExpandedMovement(expandedMovement === i ? null : i)}
+                            >
+                              <div>
+                                <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                  Movement {i + 1}
+                                  {(m.instructions || m.videoUrl) && <Info size={10} className="text-neon" />}
+                                </p>
+                                <p className="text-xl font-bold tracking-tight group-hover:text-neon transition-colors">{m.name}</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-mono text-2xl font-bold text-neon leading-none">{m.reps}</p>
+                                {m.weight && <p className="text-[10px] text-white/40 font-bold mt-1 uppercase">{m.weight}</p>}
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <p className="font-mono text-2xl font-bold text-neon leading-none">{m.reps}</p>
-                              {m.weight && <p className="text-[10px] text-white/40 font-bold mt-1 uppercase">{m.weight}</p>}
-                            </div>
+                            
+                            <AnimatePresence>
+                              {expandedMovement === i && (m.instructions || m.videoUrl) && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="mt-4 p-4 bg-white/5 border-l border-neon space-y-3">
+                                    {m.instructions && (
+                                      <p className="text-xs text-white/70 leading-relaxed">
+                                        {m.instructions}
+                                      </p>
+                                    )}
+                                    {m.videoUrl && (
+                                      <a 
+                                        href={m.videoUrl} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 text-[10px] font-bold text-neon uppercase tracking-widest hover:underline"
+                                      >
+                                        <ExternalLink size={12} /> Watch Demonstration
+                                      </a>
+                                    )}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
                           </div>
                         ))}
                       </div>
@@ -611,7 +668,7 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-20 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-white/20 text-[10px] font-bold tracking-[0.2em] uppercase">
+      <footer className="mt-20 py-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-white/20 text-[10px] font-bold tracking-[0.2em] uppercase">
         <div className="flex items-center gap-2">
           <Activity size={14} />
           <span>© 2026 BOX ARDTN PERFORMANCE SYSTEMS</span>

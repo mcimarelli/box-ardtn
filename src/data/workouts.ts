@@ -7,8 +7,19 @@ export const WORKOUTS: Workout[] = [
     type: 'FOR TIME',
     description: 'A classic CrossFit benchmark workout.',
     movements: [
-      { name: 'Thrusters', reps: '21-15-9', weight: '95/65 lbs' },
-      { name: 'Pull-ups', reps: '21-15-9' }
+      { 
+        name: 'Thrusters', 
+        reps: '21-15-9', 
+        weight: '95/65 lbs',
+        instructions: 'A combination of a front squat and an overhead press. Keep your chest up and drive through your heels.',
+        videoUrl: 'https://www.youtube.com/watch?v=L219ltL15zk'
+      },
+      { 
+        name: 'Pull-ups', 
+        reps: '21-15-9',
+        instructions: 'Chin over bar. Use a kipping or butterfly technique for speed if proficient.',
+        videoUrl: 'https://www.youtube.com/watch?v=HRV5YKKaeVw'
+      }
     ],
     category: 'Benchmark',
     difficulty: 'Advanced'
@@ -19,11 +30,34 @@ export const WORKOUTS: Workout[] = [
     type: 'FOR TIME',
     description: 'In memory of Navy Lieutenant Michael Murphy.',
     movements: [
-      { name: 'Run', reps: '1 Mile' },
-      { name: 'Pull-ups', reps: '100' },
-      { name: 'Push-ups', reps: '200' },
-      { name: 'Air Squats', reps: '300' },
-      { name: 'Run', reps: '1 Mile' }
+      { 
+        name: 'Run', 
+        reps: '1 Mile',
+        instructions: 'Maintain a steady pace. This is a long workout, don\'t sprint the first mile.'
+      },
+      { 
+        name: 'Pull-ups', 
+        reps: '100',
+        instructions: 'Break these into manageable sets. Keep your core tight.',
+        videoUrl: 'https://www.youtube.com/watch?v=HRV5YKKaeVw'
+      },
+      { 
+        name: 'Push-ups', 
+        reps: '200',
+        instructions: 'Chest must touch the floor. Full extension at the top.',
+        videoUrl: 'https://www.youtube.com/watch?v=0pkjOk0EiAk'
+      },
+      { 
+        name: 'Air Squats', 
+        reps: '300',
+        instructions: 'Hip crease below the knee. Stand up fully at the top.',
+        videoUrl: 'https://www.youtube.com/watch?v=C_VtOYc6j5c'
+      },
+      { 
+        name: 'Run', 
+        reps: '1 Mile',
+        instructions: 'Give it everything you have left.'
+      }
     ],
     category: 'Hero',
     difficulty: 'Elite',
@@ -35,9 +69,24 @@ export const WORKOUTS: Workout[] = [
     type: 'AMRAP 20',
     description: 'As many rounds as possible in 20 minutes.',
     movements: [
-      { name: 'Pull-ups', reps: '5' },
-      { name: 'Push-ups', reps: '10' },
-      { name: 'Air Squats', reps: '15' }
+      { 
+        name: 'Pull-ups', 
+        reps: '5',
+        instructions: 'Focus on a full range of motion. Chin over bar at the top, full extension at the bottom.',
+        videoUrl: 'https://www.youtube.com/watch?v=HRV5YKKaeVw'
+      },
+      { 
+        name: 'Push-ups', 
+        reps: '10',
+        instructions: 'Keep your elbows tucked in. Chest to floor.',
+        videoUrl: 'https://www.youtube.com/watch?v=0pkjOk0EiAk'
+      },
+      { 
+        name: 'Air Squats', 
+        reps: '15',
+        instructions: 'Weight on heels. Keep your chest up.',
+        videoUrl: 'https://www.youtube.com/watch?v=C_VtOYc6j5c'
+      }
     ],
     category: 'Benchmark',
     difficulty: 'Intermediate'
@@ -61,7 +110,13 @@ export const WORKOUTS: Workout[] = [
     type: 'FOR TIME',
     description: '30 Clean and Jerks for time.',
     movements: [
-      { name: 'Clean and Jerks', reps: '30', weight: '135/95 lbs' }
+      { 
+        name: 'Clean and Jerks', 
+        reps: '30', 
+        weight: '135/95 lbs',
+        instructions: 'Power clean the bar to the shoulders, then drive it overhead. Use your legs for the jerk.',
+        videoUrl: 'https://www.youtube.com/watch?v=8omS_8o_w_8'
+      }
     ],
     category: 'Benchmark',
     difficulty: 'Advanced'
