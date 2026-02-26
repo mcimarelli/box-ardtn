@@ -21,9 +21,11 @@ import {
   Activity,
   ExternalLink,
   Info,
-  Plus
+  Plus,
+  Sparkles
 } from 'lucide-react';
 import { WORKOUTS } from './data/workouts';
+import { LUCKY_WORKOUTS } from './data/luckyWorkouts';
 import { Workout, Movement, WorkoutLog } from './types';
 
 // --- Components ---
@@ -561,6 +563,16 @@ export default function App() {
     setView('workouts');
   };
 
+  const handleLucky = () => {
+    const randomIndex = Math.floor(Math.random() * LUCKY_WORKOUTS.length);
+    const workout = LUCKY_WORKOUTS[randomIndex];
+    setSelectedWorkout(workout);
+    setExpandedMovement(null);
+    setShowTimer(false);
+    setShowLogForm(false);
+    setView('workouts');
+  };
+
   const saveLog = (newLogData: Omit<WorkoutLog, 'id'>) => {
     const newLog: WorkoutLog = {
       ...newLogData,
@@ -649,6 +661,17 @@ export default function App() {
               className={`flex-shrink-0 px-4 py-2 text-[10px] font-bold tracking-widest uppercase border flex items-center gap-2 ${view === 'create' ? 'bg-neon text-black border-neon' : 'border-white/10 text-white/50 hover:border-white/30'}`}
             >
               <Plus size={12} /> CREATE
+            </button>
+          </div>
+          
+          {/* I'm Feeling Lucky Button */}
+          <div className="pt-2 border-t border-white/5">
+            <button 
+              onClick={handleLucky}
+              className="w-full py-3 bg-white/5 hover:bg-neon hover:text-black border border-white/10 hover:border-neon transition-all duration-300 flex items-center justify-center gap-3 group"
+            >
+              <Sparkles size={16} className="text-neon group-hover:text-black transition-colors" />
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase">I'm Feeling Lucky</span>
             </button>
           </div>
         </div>
